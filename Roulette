@@ -1,0 +1,35 @@
+
+import { floatsGenerator } from "./provably-fair.ts";
+
+export enum RouletteColor {
+  Green = "green",
+  Red = "red",
+  Black = "black",
+}
+
+export const rouletteNumbersArray = [0, 1, 8, 2, 9, 3, 10, 4, 11, 5, 12, 6, 13, 7, 14] as const;
+
+export type RouletteResult = typeof rouletteNumbersArray[number];
+
+export type RouletteRNGOptions = {
+  serverSeed: string;
+  clientSeed: string;
+};
+
+export const calculateRouletteResult = ({ serverSeed, clientSeed }: RouletteRNGOptions): RouletteResult => {
+  const float = floatsGenerator({ serverSeed, clientSeed, nonce: 0 }).next().value;
+
+  return Math.floor(float * 15) as RouletteResult;
+};
+
+export const rouletteResultToColor = (rouletteResult: RouletteResult): RouletteColor => {
+  if (rouletteResult === 0) {
+    return RouletteColor.Green;
+  }
+
+  if (rouletteResult <= 7) {
+    return RouletteColor.Red;
+  }
+
+  return RouletteColor.Black;
+};
